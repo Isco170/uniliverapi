@@ -1,0 +1,11 @@
+var express = require('express');
+var transaction_data_controller = require('../controller/transaction_data.controller')
+// const isAuthenticated = require('../middlewares/isAuthenticate');
+var router = express.Router()
+
+router.post('/create', transaction_data_controller.createTransaction);
+router.get('/read/:user/:password', transaction_data_controller.readTransaction);
+router.delete('/data_delete', transaction_data_controller.deleteTransaction)
+router.post('/createuser', transaction_data_controller.createUser);
+
+module.exports = router;
