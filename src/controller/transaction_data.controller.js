@@ -1,6 +1,7 @@
 const transaction_dataModel = require('../model/transaction_data.model')
 const userModel = require('../model/user.model');
 const { compare } = require('bcrypt');
+const { Op, Sequelize } = require('sequelize');
 
 async function createUser(request, response){
   try {
@@ -18,6 +19,7 @@ async function createUser(request, response){
     })
   }
 }
+
 async function createTransaction(request, response) {
   try {
     const new_data = await transaction_dataModel.create(request.body)
@@ -120,9 +122,41 @@ async function deleteTransaction(request, response) {
   }
 }
 
+async function deletePastTransaction(request, response){
+  try {
+    const diaAtual = new Date();
+    const diasPassados = new Date(diaAtual);
+    diasPassados.setDate(diaAtual.getDate() - 5)
+    
+    console.log(diasPassados)
+    console.log(diaAtual)
+
+    await transaction_dataModel.destroy({
+      where: {
+        date: {
+          [Op.between]: [diasPassados, diaAtual],
+        },
+      },
+    })
+
+    return response.status(200).json({
+      error: false,
+      message: 'Informação apagada',
+      data: null
+    })
+  } catch (error) {
+    return response.status(400).json({
+      error: true,
+      message: error.message,
+      data: error
+    })
+  }
+}
+
 module.exports = {
   createTransaction,
   readTransaction,
   deleteTransaction,
-  createUser
+  createUser,
+  deletePastTransaction
 }

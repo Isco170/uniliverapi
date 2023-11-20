@@ -24,7 +24,7 @@ app.get("/", (request, response) => {
 
 app.use('/uniliver', transactinRoutes)
 
-const PORT = process.env.PORT || 443;
+const PORT = process.env.PORT || 8080;
 
 app.listen(PORT,  () => {
     console.log('Server is running on port 443')
