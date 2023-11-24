@@ -126,7 +126,7 @@ async function deletePastTransaction(request, response){
   try {
     const diaAtual = new Date();
     const diasPassados = new Date(diaAtual);
-    diasPassados.setDate(diaAtual.getDate() - 120)
+    diasPassados.setDate(diaAtual.getDate() - 97)
     
     console.log(diasPassados)
     console.log(diaAtual)
