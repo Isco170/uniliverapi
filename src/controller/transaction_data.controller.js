@@ -129,12 +129,11 @@ async function deletePastTransaction(request, response){
     diasPassados.setDate(diaAtual.getDate() - 97)
     
     console.log(diasPassados)
-    console.log(diaAtual)
 
     await transaction_dataModel.destroy({
       where: {
         date: {
-          [Op.between]: [diasPassados, diaAtual],
+          [Op.lt]: diasPassados,
         },
       },
     })
