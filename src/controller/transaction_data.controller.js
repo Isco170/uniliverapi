@@ -1,7 +1,7 @@
 const transaction_dataModel = require('../model/transaction_data.model')
 const userModel = require('../model/user.model');
 const { compare } = require('bcrypt');
-const { Op, Sequelize } = require('sequelize');
+const { Op } = require('sequelize');
 
 async function createUser(request, response){
   try {
@@ -34,6 +34,43 @@ async function createTransaction(request, response) {
       message: 'Erro adicionando data',
       data: error
     })
+  }
+}
+
+async function readTransactionBetween(request, response) {
+  try {
+    const fromDate = new Date(request.params.from); // Parse the date to ISO format
+    const toDate = new Date(request.params.to);
+
+    // Add time for end-of-day to include all records for the 'toDate'
+    toDate.setUTCHours(23, 59, 59, 999);
+
+    const transaction_data_info = await transaction_dataModel.findAll({
+      where: {
+        date: {
+          [Op.between]: [fromDate, toDate]  // Filter date between fromDate and toDate
+        }
+      }
+    });
+
+    if (transaction_data_info.length === 0) {
+      return response.status(404).send({
+        error: true,
+        message: "No data",
+        data: null
+      });
+    }
+    return response.status(200).send({
+      error: false,
+      message: 'Transactions data',
+      data: transaction_data_info
+    });
+  } catch (error) {
+    return response.status(500).send({
+      error: true,
+      message: 'Error retrieving data',
+      data: error
+    });
   }
 }
 
@@ -155,6 +192,7 @@ async function deletePastTransaction(request, response){
 module.exports = {
   createTransaction,
   readTransaction,
+  readTransactionBetween,
   deleteTransaction,
   createUser,
   deletePastTransaction
